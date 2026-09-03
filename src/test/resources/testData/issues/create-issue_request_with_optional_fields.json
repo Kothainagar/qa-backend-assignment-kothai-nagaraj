@@ -1,0 +1,17 @@
+{
+  "title": "GitLab issue with optional fields",
+  "assignee_id": 12345,
+  "confidential": false,
+  "created_at": "2026-09-03T10:00:00Z",
+  "description": "Validates optional GitLab issue fields.",
+  "discussion_to_resolve": "discussion-id",
+  "due_date": "2026-09-10",
+  "iid": 1001,
+  "issue_type": "issue",
+  "labels": "api-test,automated",
+  "merge_request_to_resolve_discussions_of": 42,
+  "milestone_id": 321,
+  "milestone": "Sprint 1",
+  "severity": "high",
+  "start_date": "2026-09-03"
+}

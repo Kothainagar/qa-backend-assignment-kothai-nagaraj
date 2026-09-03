@@ -1,0 +1,4 @@
+gitlab:
+  base-url: "https://gitlab.com/api/v4"
+  project-id: "86052777"
+  token-environment-variable: "GITLAB_TOKEN"
