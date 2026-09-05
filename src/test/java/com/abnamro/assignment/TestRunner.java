@@ -8,8 +8,9 @@ import io.cucumber.testng.CucumberOptions;
         glue = "com.abnamro.assignment.stepdefinitions",
         plugin = {
                 "pretty",
-                "html:target/cucumber-reports/create-issue-report.html"
+                "html:target/cucumber-reports/test-results.html"
         },
+        tags = "not @skip",
         monochrome = true
 )
 

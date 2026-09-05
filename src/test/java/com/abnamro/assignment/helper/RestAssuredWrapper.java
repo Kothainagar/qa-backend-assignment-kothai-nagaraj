@@ -16,39 +16,8 @@ public class RestAssuredWrapper {
         this.baseUrl = baseUrl;
     }
 
-    public Response sendRequestWithHeaderAndBody(
-            Method method,
-            String endpoint,
-            Map<String, String> headers,
-            String requestBody) {
 
-        return sendRequest(method, endpoint, headers, requestBody);
-    }
-
-    public Response sendRequestWithHeaderOnly(
-            Method method,
-            String endpoint,
-            Map<String, String> headers) {
-
-        return sendRequest(method, endpoint, headers, null);
-    }
-
-    public Response sendRequestWithoutHeader(
-            Method method,
-            String endpoint,
-            String requestBody) {
-
-        return sendRequest(method, endpoint, Map.of(), requestBody);
-    }
-
-    public Response sendRequestWithoutHeaderAndBody(
-            Method method,
-            String endpoint) {
-
-        return sendRequest(method, endpoint, Map.of(), null);
-    }
-
-    private Response sendRequest(
+    public Response sendRequest(
             Method method,
             String endpoint,
             Map<String, String> headers,

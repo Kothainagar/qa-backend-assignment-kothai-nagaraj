@@ -5,32 +5,18 @@ import io.restassured.response.Response;
 
 public class ScenarioContext {
 
-    private DocumentContext requestContext;
-    private Response response;
-    private Number createdIssueIid;
+    public Response response;
 
-    public DocumentContext getRequestContext() {
-        return requestContext;
-    }
+    public DocumentContext createIssueRequest;
+    public DocumentContext createIssueResponse;
 
-    public void setRequestContext(DocumentContext requestContext) {
-        this.requestContext = requestContext;
-    }
+    public DocumentContext retrieveIssueResponse;
 
-    public Response getResponse() {
-        return response;
-    }
+    public DocumentContext updateIssueRequest;
+    public DocumentContext updateIssueResponse;
 
-    public void setResponse(Response response) {
-        this.response = response;
-    }
+    public DocumentContext deleteIssueResponse;
 
-    public Number getCreatedIssueIid() {
-        return createdIssueIid;
-    }
-
-    public void setCreatedIssueIid(Number createdIssueIid) {
-        this.createdIssueIid = createdIssueIid;
-    }
+    public String iid;
 
 }

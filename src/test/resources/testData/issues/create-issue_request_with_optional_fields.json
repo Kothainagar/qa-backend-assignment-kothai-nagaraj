@@ -1,17 +1,17 @@
 {
-  "title": "GitLab issue with optional fields",
-  "assignee_id": 12345,
+  "title": "{{title}}",
+  "assignee_id": 42009381,
   "confidential": false,
-  "created_at": "2026-09-03T10:00:00Z",
+  "created_at": "{{created_at}}",
   "description": "Validates optional GitLab issue fields.",
   "discussion_to_resolve": "discussion-id",
-  "due_date": "2026-09-10",
-  "iid": 1001,
-  "issue_type": "issue",
+  "due_date": "{{due_date}}",
+  "iid": "{{iid}}",
+  "issue_type": "{{issue_type}}",
   "labels": "api-test,automated",
   "merge_request_to_resolve_discussions_of": 42,
-  "milestone_id": 321,
-  "milestone": "Sprint 1",
-  "severity": "high",
-  "start_date": "2026-09-03"
+  "milestone_id": 7586014,
+  "milestone": "API test milestone-1.0",
+  "severity": "{{severity}}",
+  "start_date": "{{start_date}}"
 }

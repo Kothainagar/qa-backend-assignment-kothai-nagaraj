@@ -27,3 +27,9 @@ hs_err_pid*
 .idea
 target
 *.iml
+
+#test result file
+Test Results - *.html
+
+# macOS
+.DS_Store

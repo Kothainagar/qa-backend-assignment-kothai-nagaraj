@@ -17,7 +17,6 @@
         <testng.version>7.12.0</testng.version>
         <snakeyaml.version>2.6</snakeyaml.version>
         <json-path.version>2.9.0</json-path.version>
-        <junit.version>6.1.3</junit.version>
         <surefire.version>3.5.6</surefire.version>
     </properties>
 
@@ -54,20 +53,6 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
