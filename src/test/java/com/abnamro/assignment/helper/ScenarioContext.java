@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 
 public class ScenarioContext {
 
+    // Stores the latest API response for common status and error validation.
     public Response response;
 
     public DocumentContext createIssueRequest;
@@ -15,8 +16,7 @@ public class ScenarioContext {
     public DocumentContext updateIssueRequest;
     public DocumentContext updateIssueResponse;
 
-    public DocumentContext deleteIssueResponse;
-
+    // Stores the created issue IID for retrieve, update and cleanup operations.
     public String iid;
 
 }

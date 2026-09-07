@@ -1,6 +1,8 @@
 package com.abnamro.assignment.helper;
 
 import io.restassured.RestAssured;
+import io.restassured.config.HttpClientConfig;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
@@ -23,7 +25,13 @@ public class RestAssuredWrapper {
             Map<String, String> headers,
             String requestBody) {
 
-        RequestSpecification request = RestAssured.given()
+        RequestSpecification request = RestAssured
+                .given()
+                .config(RestAssuredConfig.config()
+                        .httpClient(HttpClientConfig.httpClientConfig()
+                                .setParam("http.connection.timeout", 10000)
+                                .setParam("http.socket.timeout", 30000)
+                                .setParam("http.connection-manager.timeout", 10000L)))
                 .baseUri(baseUrl);
 
         if (headers != null && !headers.isEmpty()) {

@@ -19,6 +19,21 @@ Feature: GitLab Project issue deletion API validation
       | Reject issue deletion with invalid IID      | 0b23      | 400        | issue_iid is invalid |
       | Reject issue deletion with non-existent IID | 994353499 | 404        | 404 Issue Not Found  |
 
+  @deleteIssue-ErrorFlow
+  Scenario: Error Flow - Reject deleting an issue that was already deleted
+    Given A GitLab project issue exists in the project
+    When I send the request to delete the issue
+    Then the issue should be deleted successfully
+    When I send the request to delete the issue
+    Then the request should be rejected with status code 404 and error message 404 Issue Not Found
+
+  @deleteIssue-ErrorFlow
+  Scenario: Error Flow - Reject deleting a valid issue IID under the non-existent project ID
+    Given A GitLab project issue exists in the project
+    When I send the request to delete the issue with below details
+      | projectId |
+      | 999999999 |
+    Then the request should be rejected with status code 404 and error message 404 Project Not Found
 
   @deleteIssue-ErrorFlow
   Scenario Outline: Error Flow - Delete a GitLab issue with invalid authentication types - <test>

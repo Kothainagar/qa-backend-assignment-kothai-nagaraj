@@ -11,9 +11,11 @@ import io.restassured.http.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.abnamro.assignment.helper.Utilities.dataTableToMap;
-import static com.abnamro.assignment.helper.Utilities.prepareHeaders;
+import static com.abnamro.assignment.helper.Utilities.prepareTestData;
 import static com.abnamro.assignment.helper.Utilities.readJsonAsDocumentContext;
+import static com.abnamro.assignment.helper.Utilities.resolveHeaders;
+import static com.abnamro.assignment.helper.Utilities.resolveIid;
+import static com.abnamro.assignment.helper.Utilities.resolveProjectId;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -32,80 +34,91 @@ public class RetrieveIssueStepDefinitions extends BaseSetup {
         sendRetrieveIssueRequestWithDetails(null);
     }
 
-
     @When("I send the request to retrieve the issue with below details")
     public void sendRetrieveIssueRequestWithDetails(DataTable dataTable) {
-        // Convert DataTable to a map (Utilities.dataTableToMap handles null/empty DataTable)
-        testData = dataTableToMap(dataTable);
-        String iid = context.iid;
-        if (testData.containsKey("iid")) {
-            iid = testData.get("iid").toString();
-        }
-        performRetrieve(iid);
+        testData = prepareTestData(dataTable);
+        String issueIid = resolveIid(testData, context.iid);
+
+        performRetrieve(issueIid);
     }
 
     @Then("the issue should be retrieved successfully with the expected details")
     public void validateRetrievedIssue() {
-        log.info("Validating retrieved issue response for IID: {}", context.iid);
-        // Validate the response status code and parse the response body
-        assertNotNull(context.response, "No retrieve response is available");
-        assertEquals(context.response.statusCode(), 200, "Unexpected retrieve status");
-        responseContext = readJsonAsDocumentContext(context.response);
-        context.retrieveIssueResponse = responseContext;
+        log.info("Validating retrieved issue for IID: {}", context.iid);
+
+        prepareSuccessfulResponseContext();
 
         assertNotNull(responseContext.read("$.title"), "Title is missing");
         assertNotNull(responseContext.read("$.id"), "Issue ID is missing");
         assertNotNull(responseContext.read("$.iid"), "Issue IID is missing");
-        assertEquals(responseContext.read("$.state"), "opened", "Unexpected issue state");
-        assertEquals(responseContext.read("$.project_id").toString(), projectId, "Project mismatch");
-        log.info("Retrieved issue validation successful for IID: {}", context.iid);
 
+        assertEquals(responseContext.read("$.state"), "opened", "Unexpected issue state");
+
+        assertEquals(responseContext.read("$.project_id").toString(), projectId, "Project ID mismatch");
+
+        log.info("Retrieved issue validation completed for IID: {}", context.iid);
     }
 
     @Then("the retrieve response should match the created issue")
     public void validateRetrieveResponseMatchesCreateResponse() {
-        log.info("Validating that the retrieve response matches the created issue for IID: {}", context.iid);
+        log.info("Comparing retrieve and create responses for IID: {}", context.iid);
 
-        assertNotNull(context.response, "No retrieve response is available");
-        assertEquals(context.response.statusCode(), 200, "Unexpected retrieve status");
-        responseContext = readJsonAsDocumentContext(context.response);
-        context.retrieveIssueResponse = responseContext;
+        prepareSuccessfulResponseContext();
 
         DocumentContext createResponseContext = context.createIssueResponse;
         assertNotNull(createResponseContext, "Original create response is missing");
 
-        String[] paths = {
-                "$.id", "$.iid", "$.project_id", "$.title", "$.description",
-                "$.state", "$.issue_type", "$.confidential", "$.created_at"
+        String[] matchingPaths = {
+                "$.id",
+                "$.iid",
+                "$.project_id",
+                "$.title",
+                "$.description",
+                "$.state",
+                "$.issue_type",
+                "$.confidential",
+                "$.created_at"
         };
 
-        for (String path : paths) {
-            Object actual = responseContext.read(path);
+        for (String path : matchingPaths) {
             Object expected = createResponseContext.read(path);
+            Object actual = responseContext.read(path);
 
+            log.info("Validating path: {}, expected: {}, actual: {}", path, expected, actual);
             assertEquals(actual, expected, "Mismatch for response field: " + path);
         }
-        log.info("Retrieve response matches the created issue for IID: {}", context.iid);
+
+        log.info("Retrieve response matches create response for IID: {}", context.iid);
     }
 
-    private void performRetrieve(String iid) {
-        log.info("Preparing to send request to retrieve issue with IID: {}", iid);
-        assertNotNull(iid, "No issue IID is available");
+    private void performRetrieve(String issueIid) {
+        assertNotNull(issueIid, "No issue IID is available");
 
-        // Construct the endpoint for retrieving the issue
-        String endpoint = "/projects/" + projectId + "/issues/" + iid;
+        String testProjectId = resolveProjectId(testData, projectId);
+        String endpoint = "/projects/" + testProjectId + "/issues/" + issueIid;
 
-        log.info("Sending GET request to endpoint: {}", endpoint);
+        Map<String, String> headers = resolveHeaders(testData, token);
 
-        //prepare Headers
-        String authType = testData.getOrDefault("authType", "valid").toString();
-        Map<String, String> headers = prepareHeaders(authType, token);
+        log.info("Sending retrieve request to endpoint: {}", endpoint);
 
         context.response = restAssuredWrapper.sendRequest(
-                Method.GET, endpoint, headers, null
+                Method.GET,
+                endpoint,
+                headers,
+                null
         );
 
-        log.info("Get response status: {}, body: {}", context.response.statusCode(), context.response.asPrettyString());
+        log.info("Retrieve response status: {}, body: {}", context.response.statusCode(), context.response.asPrettyString());
     }
 
+    private void prepareSuccessfulResponseContext() {
+        assertNotNull(context.response, "No retrieve response is available");
+
+        assertEquals(context.response.statusCode(), 200, "Unexpected retrieve status");
+
+        responseContext = readJsonAsDocumentContext(context.response);
+
+        // Store the parsed response so another step can access it if required.
+        context.retrieveIssueResponse = responseContext;
+    }
 }

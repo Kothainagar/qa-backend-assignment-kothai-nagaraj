@@ -9,8 +9,7 @@ import java.util.Map;
 
 public abstract class BaseSetup {
 
-    protected final Logger log =
-            LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     protected final String projectId;
     protected final String token;
@@ -20,9 +19,7 @@ public abstract class BaseSetup {
         String environment = System.getProperty("env", "default").trim();
 
         if (!environment.matches("[a-zA-Z0-9_-]+")) {
-            throw new IllegalArgumentException(
-                    "Invalid environment name: " + environment
-            );
+            throw new IllegalArgumentException("Invalid environment name: " + environment);
         }
 
         String configPath = "default".equals(environment)
@@ -34,25 +31,18 @@ public abstract class BaseSetup {
         Object gitlabSection = config.get("gitlab");
 
         if (!(gitlabSection instanceof Map<?, ?> gitlabConfig)) {
-            throw new IllegalArgumentException(
-                    "Missing or invalid 'gitlab' section in " + configPath
-            );
+            throw new IllegalArgumentException("Missing or invalid 'gitlab' section in " + configPath);
         }
 
-        String baseUrl = requiredValue(gitlabConfig, "base-url");
-        projectId = requiredValue(gitlabConfig, "project-id");
+        String baseUrl = getValueFromConfig(gitlabConfig, "base-url");
+        projectId = getValueFromConfig(gitlabConfig, "project-id");
 
-        String tokenVariable = requiredValue(
-                gitlabConfig,
-                "token-environment-variable"
-        );
+        String tokenVariable = getValueFromConfig(gitlabConfig, "token-environment-variable");
 
         token = System.getenv(tokenVariable);
 
         if (token == null || token.isBlank()) {
-            throw new IllegalStateException(
-                    "Required environment variable is not set: " + tokenVariable
-            );
+            throw new IllegalStateException("Required environment variable is not set: " + tokenVariable);
         }
 
         restAssuredWrapper = new RestAssuredWrapper(baseUrl);
@@ -60,13 +50,11 @@ public abstract class BaseSetup {
         log.info("Initialized API setup for environment: {}", environment);
     }
 
-    private static String requiredValue(Map<?, ?> config, String key) {
+    private static String getValueFromConfig(Map<?, ?> config, String key) {
         Object value = config.get(key);
 
         if (value == null || value.toString().isBlank()) {
-            throw new IllegalArgumentException(
-                    "Missing configuration value: gitlab." + key
-            );
+            throw new IllegalArgumentException("Missing configuration value: gitlab." + key);
         }
 
         return value.toString();

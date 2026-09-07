@@ -11,7 +11,6 @@
   "labels": "api-test,automated",
   "merge_request_to_resolve_discussions_of": 42,
   "milestone_id": 7586014,
-  "milestone": "API test milestone-1.0",
   "severity": "{{severity}}",
   "start_date": "{{start_date}}"
 }

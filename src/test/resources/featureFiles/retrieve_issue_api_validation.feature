@@ -26,6 +26,14 @@ Feature: GitLab Project issue retrieval API validation
       | Reject issue retrieve with non-existent IID | 994353499 | 404        | 404 Not found        |
 
   @retrieveIssue-ErrorFlow
+  Scenario: Error Flow - Reject retrieving a valid issue IID under the non-existent project ID
+    Given A GitLab project issue exists in the project
+    When I send the request to retrieve the issue with below details
+      | projectId |
+      | 999999999 |
+    Then the request should be rejected with status code 404 and error message 404 Project Not Found
+
+  @retrieveIssue-ErrorFlow
   Scenario Outline: Error Flow - Retrieve a GitLab project issue with invalid authentication types - <test>
     When I send the request to retrieve the issue with below details
       | authType   | iid  |

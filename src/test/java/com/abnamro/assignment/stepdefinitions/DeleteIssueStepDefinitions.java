@@ -10,8 +10,10 @@ import io.restassured.http.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.abnamro.assignment.helper.Utilities.dataTableToMap;
-import static com.abnamro.assignment.helper.Utilities.prepareHeaders;
+import static com.abnamro.assignment.helper.Utilities.prepareTestData;
+import static com.abnamro.assignment.helper.Utilities.resolveHeaders;
+import static com.abnamro.assignment.helper.Utilities.resolveIid;
+import static com.abnamro.assignment.helper.Utilities.resolveProjectId;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -33,15 +35,9 @@ public class DeleteIssueStepDefinitions extends BaseSetup {
 
     @When("I send the request to delete the issue with below details")
     public void sendDeleteIssueRequestWithDetails(DataTable dataTable) {
-        // Convert DataTable to a map (Utilities.dataTableToMap handles null/empty DataTable)
-        testData = dataTableToMap(dataTable);
-        String iid = context.iid;
-
-        if (testData.containsKey("iid")) {
-            iid = testData.get("iid").toString();
-        }
-
-        performDelete(iid);
+        testData = prepareTestData(dataTable);
+        String issueIid = resolveIid(testData, context.iid);
+        performDelete(issueIid);
     }
 
 
@@ -59,11 +55,9 @@ public class DeleteIssueStepDefinitions extends BaseSetup {
 
     private void performDelete(String issueIid) {
         assertNotNull(issueIid, "No issue IID is available");
-
-        String endpoint = "/projects/" + projectId + "/issues/" + issueIid;
-
-        String authType = testData.getOrDefault("authType", "valid").toString();
-        Map<String, String> headers = prepareHeaders(authType, token);
+        String testProjectId = resolveProjectId(testData, projectId);
+        String endpoint = "/projects/" + testProjectId + "/issues/" + issueIid;
+        Map<String, String> headers = resolveHeaders(testData, token);
 
         log.info("Sending DELETE request to endpoint: {}", endpoint);
 
@@ -74,6 +68,10 @@ public class DeleteIssueStepDefinitions extends BaseSetup {
                 null
         );
 
-        log.info("Delete response status: {}, body: {}", context.response.statusCode(), context.response.asPrettyString());
+        log.info("Delete response status: {}", context.response.statusCode());
+
+        if (!context.response.asString().isBlank()) {
+            log.info("Delete response body: {}", context.response.asPrettyString());
+        }
     }
 }
